@@ -73,7 +73,7 @@ class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, 
     private lateinit var recordsTable: DynamoDbTable<ContentRecord>
 
     init {
-        recordsTable = dynamoDbEnhancedClient.table("records", TableSchema.fromBean(ContentRecord::class.java))
+        recordsTable = dynamoDbEnhancedClient.table("test_kgi_records", TableSchema.fromBean(ContentRecord::class.java))
         try {
             recordsTable.createTable()
         }catch (e: Exception ){
