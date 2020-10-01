@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.context.ConfigurableApplicationContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class AppTest {
 
@@ -37,26 +38,36 @@ class AppTest {
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r1_l2")._setLoadId("l2")._setContent("content v1-modified"))
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r1_l3")._setLoadId("l3")._setContent("content v1-failure-modified"))
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l2")._setLoadId("l2")._setContent("content r2 v1"))
-        recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l3")._setLoadId("l3")._setContent("content r2 v1"))
+        recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l3")._setLoadId("l3")._setContent("content r2 v2"))
+        recordsService.delete( ContentRecord()._setPartitionId("1")._setSortKey("r2_l4")._setLoadId("l4")._setContent("content r2 v1"))
     }
 
 
     @Test fun searchByActiveLoads(){
         var activeLoads  = listOf("l1","l2")
-        var r: ContentRecord =  recordsService.find("r1", activeLoads)
-        assertEquals("content v1-modified", r.content)
+        var r: ContentRecord? =  recordsService.find("r1", activeLoads)
+        assertEquals("content v1-modified", r?.content)
 
         activeLoads  = listOf("l1","l2","l3")
         r =  recordsService.find("r1", activeLoads)
-        assertEquals("content v1-failure-modified", r.content)
+        assertEquals("content v1-failure-modified", r?.content)
 
         activeLoads  = listOf("l1")
         r =  recordsService.find("r1", activeLoads)
-        assertEquals("content v1", r.content)
+        assertEquals("content v1", r?.content)
+
+
+        activeLoads  = listOf("l1","l2","l3")
+        r =  recordsService.find("r2", activeLoads)
+        assertEquals("content r2 v2", r?.content)
+
+        activeLoads  = listOf("l1","l2","l3","l4")
+        r =  recordsService.find("r2", activeLoads)
+        assertNull(r,"expected soft delete")
     }
 
 
     @Test fun xfindAndRemoveLoad(){
-        recordsService.deleteRecordsByLoad("l3")
+        //recordsService.deleteRecordsByLoad("l3")
     }
 }

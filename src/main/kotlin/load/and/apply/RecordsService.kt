@@ -23,7 +23,7 @@ class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, 
         recordsTable.putItem(content)
     }
 
-    fun find(prefix: String, activeLoads: List<String>): ContentRecord {
+    fun find(prefix: String, activeLoads: List<String>): ContentRecord? {
         val conditions:QueryConditional = QueryConditional.sortBeginsWith{ kb ->
             kb.partitionValue("1")
             kb.sortValue(prefix)
@@ -31,6 +31,8 @@ class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, 
         val recordsIterable = recordsTable.query(  QueryEnhancedRequest.builder().queryConditional( conditions).build())
         val candidates = recordsIterable.items().map { r -> Pair(r, indexOfLoad( r.loadId, activeLoads)) }
                 .filter { pair -> pair.second >=0 }
+
+        if( candidates.isEmpty()) return null
         val initial = candidates.first()
         val res = candidates.foldRight(initial){ pair, acc->
             if( pair.second > acc.second){
@@ -39,7 +41,7 @@ class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, 
                 acc
             }
         }
-        return res.first
+        return if( res.first.isDeleted) null else res.first
     }
 
     private fun indexOfLoad(loadId: String, activeLoads: List<String>): Int {
@@ -61,6 +63,11 @@ class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, 
             println("deleting record: $it")
             recordsTable.deleteItem(it)
         }
+    }
+
+    fun delete(content: ContentRecord) {
+        content.isDeleted = true
+        recordsTable.putItem(content)
     }
 
     private lateinit var recordsTable: DynamoDbTable<ContentRecord>

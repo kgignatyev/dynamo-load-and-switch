@@ -11,6 +11,7 @@ public class ContentRecord {
     String sortKey;
     String loadId;
     String content;
+    boolean deleted = false;
 
 
     @DynamoDbPartitionKey
@@ -71,12 +72,21 @@ public class ContentRecord {
         return this;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "ContentRecord{" +
                 "partitionId='" + partitionId + '\'' +
                 ", sortKey='" + sortKey + '\'' +
                 ", loadId='" + loadId + '\'' +
+                ", deleted='" + deleted + '\'' +
                 ", content='" + content + '\'' +
                 '}';
     }
