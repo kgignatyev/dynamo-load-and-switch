@@ -56,7 +56,7 @@ class AppTest {
     }
 
 
-    @Test fun findAndRemoveLoad(){
-//        recordsService.deleteRecordsByLoad("l3")
+    @Test fun xfindAndRemoveLoad(){
+        recordsService.deleteRecordsByLoad("l3")
     }
 }
