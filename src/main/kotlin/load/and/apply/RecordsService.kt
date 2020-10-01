@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 @Service
-class RecordsService (val dynamoDbEnhancedClient: DynamoDbEnhancedClient, val dynamoDbClient: DynamoDbClient) {
+class RecordsService (final val dynamoDbEnhancedClient: DynamoDbEnhancedClient, val dynamoDbClient: DynamoDbClient) {
 
     fun listTables(): MutableList<String> {
         return dynamoDbClient.listTables().tableNames()
@@ -58,7 +58,8 @@ class RecordsService (val dynamoDbEnhancedClient: DynamoDbEnhancedClient, val dy
                 .addAttributeToProject("partitionId")
                 .addAttributeToProject("sortKey").build()
         recordsTable.scan( scanFilter ).items().forEach {
-            println("will delete record: $it")
+            println("deleting record: $it")
+            recordsTable.deleteItem(it)
         }
     }
 

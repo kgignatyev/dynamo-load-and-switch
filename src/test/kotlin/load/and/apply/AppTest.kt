@@ -37,7 +37,7 @@ class AppTest {
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r1_l2")._setLoadId("l2")._setContent("content v1-modified"))
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r1_l3")._setLoadId("l3")._setContent("content v1-failure-modified"))
         recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l2")._setLoadId("l2")._setContent("content r2 v1"))
-        recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l3")._setLoadId("l2")._setContent("content r2 v1"))
+        recordsService.insert( ContentRecord()._setPartitionId("1")._setSortKey("r2_l3")._setLoadId("l3")._setContent("content r2 v1"))
     }
 
 
@@ -49,10 +49,14 @@ class AppTest {
         activeLoads  = listOf("l1","l2","l3")
         r =  recordsService.find("r1", activeLoads)
         assertEquals("content v1-failure-modified", r.content)
+
+        activeLoads  = listOf("l1")
+        r =  recordsService.find("r1", activeLoads)
+        assertEquals("content v1", r.content)
     }
 
 
     @Test fun findAndRemoveLoad(){
-        recordsService.deleteRecordsByLoad("l3")
+//        recordsService.deleteRecordsByLoad("l3")
     }
 }

@@ -19,8 +19,6 @@ public class ContentRecord {
     }
 
 
-
-
     @DynamoDbSortKey
     public String getSortKey() {
         return sortKey;
